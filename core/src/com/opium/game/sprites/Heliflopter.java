@@ -18,19 +18,18 @@ public class Heliflopter {
     private Vector3 velocity;
     private Texture heliflopter;
     private Sprite flopterSprite;
+    private float mouseX;
+    private float mouseY;
 
     public Heliflopter(int x, int y) {
 
         position = new Vector3(x, y, 0);
-        velocity = new Vector3(randInt(-7, -1), randInt(-5, 5), 0);
+        velocity = new Vector3(0, 0, 0);
         heliflopter = new Texture("heli1.png");
         flopterSprite = new Sprite(heliflopter);
+        mouseX = position.x;
+        mouseY = position.y;
 
-    }
-
-    public void update(float dt) {
-        checkBounce();
-        position.add(velocity.x, velocity.y, 0);
     }
 
     public Vector3 getPosition() {
@@ -41,27 +40,29 @@ public class Heliflopter {
         return flopterSprite;
     }
 
-    private void checkBounce() {
-        if (position.x > MyGdxGame.WIDTH - heliflopter.getWidth() || position.x < 0) {
-            bounceX();
-        } else if (position.y > MyGdxGame.HEIGHT - heliflopter.getHeight() || position.y < 0) {
-            bounceY();
-        }
-    }
-
-    private void bounceX() {
-        Vector3 currentVel = velocity;
-        flopterSprite.flip(true, false);
-        setVelocity(new Vector3(-currentVel.x, currentVel.y, 0));
-    }
-
-    private void bounceY() {
-        Vector3 currentVel = velocity;
-        setVelocity(new Vector3(currentVel.x, -currentVel.y, 0));
-    }
-
     public void setVelocity(Vector3 velocity) {
         this.velocity = velocity;
+    }
+
+    public void setMouseX(int mouseX) {
+        this.mouseX = mouseX;
+    }
+
+    public void setMouseY(int mouseY) {
+        this.mouseY = mouseY;
+    }
+
+    public void update(float dt) {
+
+        // Quick maths
+        float diffX = mouseX - position.x;
+        float diffY = mouseY - position.y;
+
+        double angle = Math.atan2(diffY, diffX) * 180 / Math.PI;
+
+        position.x += Math.cos(angle * Math.PI/180) * 2;
+        position.y += Math.sin(angle * Math.PI/180) * 2;
+
     }
 
     public static int randInt(int min, int max) {

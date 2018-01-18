@@ -1,5 +1,6 @@
 package com.opium.game.states;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.opium.game.MyGdxGame;
@@ -13,6 +14,7 @@ public class PlayState extends State {
 
     private Heliflopter heliflopter;
 
+
     protected PlayState(GameStateManager gsm) {
         super(gsm);
         heliflopter = new Heliflopter(MyGdxGame.WIDTH / 2, MyGdxGame.HEIGHT / 2);
@@ -20,7 +22,10 @@ public class PlayState extends State {
 
     @Override
     protected void handleInput() {
-
+        if(Gdx.input.justTouched()){
+            heliflopter.setMouseX(Gdx.input.getX());
+            heliflopter.setMouseY(MyGdxGame.HEIGHT - Gdx.input.getY());
+        }
     }
 
     @Override
@@ -32,6 +37,7 @@ public class PlayState extends State {
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
+        sb.draw(new Texture("background.jpg"), 0,0, MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
         sb.draw(heliflopter.getSprite(),
                 heliflopter.getPosition().x,
                 heliflopter.getPosition().y);
