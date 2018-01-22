@@ -1,7 +1,9 @@
 package com.opium.game.sprites;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.opium.game.MyGdxGame;
 
@@ -14,6 +16,11 @@ import java.util.Random;
 
 public class Heliflopter {
 
+    public static final int FRAME_COLS = 1, FRAME_ROWS = 4;
+
+    Animation<TextureRegion> flyAnimation;
+    Texture flopterSheet;
+
     private Vector3 position;
     private Vector3 velocity;
     private Texture heliflopter;
@@ -23,13 +30,32 @@ public class Heliflopter {
 
         position = new Vector3(x, y, 0);
         velocity = new Vector3(randInt(-7, -1), randInt(-5, 5), 0);
+        flopterSheet = new Texture("heliflopterSpriteSheet.png");
         heliflopter = new Texture("heli1.png");
-        flopterSprite = new Sprite(heliflopter);
 
+        TextureRegion[][] tmp = TextureRegion.split(
+                flopterSheet,
+                flopterSheet.getWidth() / FRAME_COLS,
+                flopterSheet.getHeight() / FRAME_ROWS
+        );
+
+        TextureRegion[] flopterFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
+        int index = 0;
+        for (int i = 0; i < FRAME_ROWS; i++) {
+            for (int j = 0; j < FRAME_COLS; j++) {
+                flopterFrames[index++] = tmp[i][j];
+            }
+        }
+
+        flyAnimation = new Animation<TextureRegion>(0.1f, flopterFrames);
+        flopterSprite = new Sprite(heliflopter);
+    }
+
+    public Animation<TextureRegion> getFlyAnimation() {
+        return flyAnimation;
     }
 
     public void update(float dt) {
-        checkBounce();
         position.add(velocity.x, velocity.y, 0);
     }
 
@@ -41,21 +67,23 @@ public class Heliflopter {
         return flopterSprite;
     }
 
-    private void checkBounce() {
+    public boolean checkBounce() {
         if (position.x > MyGdxGame.WIDTH - heliflopter.getWidth() || position.x < 0) {
             bounceX();
+            return true;
+
         } else if (position.y > MyGdxGame.HEIGHT - heliflopter.getHeight() || position.y < 0) {
             bounceY();
         }
+        return false;
     }
 
-    private void bounceX() {
+    public void bounceX() {
         Vector3 currentVel = velocity;
-        flopterSprite.flip(true, false);
         setVelocity(new Vector3(-currentVel.x, currentVel.y, 0));
     }
 
-    private void bounceY() {
+    public void bounceY() {
         Vector3 currentVel = velocity;
         setVelocity(new Vector3(currentVel.x, -currentVel.y, 0));
     }
