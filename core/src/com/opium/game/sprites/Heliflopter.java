@@ -26,12 +26,16 @@ public class Heliflopter {
     private Texture heliflopter;
     private Sprite flopterSprite;
 
+    private boolean flip;
+
     public Heliflopter(int x, int y) {
 
         position = new Vector3(x, y, 0);
         velocity = new Vector3(randInt(-7, -1), randInt(-5, 5), 0);
         flopterSheet = new Texture("heliflopterSpriteSheet.png");
         heliflopter = new Texture("heli1.png");
+
+        flip = false;
 
         TextureRegion[][] tmp = TextureRegion.split(
                 flopterSheet,
@@ -97,5 +101,13 @@ public class Heliflopter {
 
         int randomNum = rand.nextInt((max - min) + 1) + min;
         return randomNum;
+    }
+
+    public boolean isFlip() {
+        return flip;
+    }
+
+    public void setFlip(boolean flip) {
+        this.flip = flip;
     }
 }
