@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.opium.game.MyGdxGame;
+import com.opium.game.handlers.CollisionHandler;
 import com.opium.game.sprites.Heliflopter;
 
 import java.util.ArrayList;
@@ -15,19 +16,21 @@ import java.util.ArrayList;
 
 public class PlayState extends State {
 
-    private Heliflopter heliflopter;
-    private Heliflopter heliflopter2;
+
     private ArrayList<Heliflopter> heliflopters = new ArrayList<Heliflopter>();
     private float stateTime;
+
+    private CollisionHandler collisionHandler;
 
     protected PlayState(GameStateManager gsm) {
         super(gsm);
         stateTime = 0f;
-        heliflopter = new Heliflopter(MyGdxGame.WIDTH / 2, MyGdxGame.HEIGHT / 2);
-        heliflopter2 = new Heliflopter(MyGdxGame.WIDTH / 2, MyGdxGame.HEIGHT / 2);
-        heliflopters.add(heliflopter);
-        heliflopters.add(heliflopter2);
 
+        for (int i = 0; i < 4; i++) {
+            heliflopters.add(new Heliflopter(MyGdxGame.WIDTH / (i+1), MyGdxGame.HEIGHT / (i+1)));
+        }
+
+        collisionHandler = new CollisionHandler(heliflopters);
     }
 
     @Override
@@ -41,17 +44,12 @@ public class PlayState extends State {
         for(Heliflopter heli : heliflopters){
             heli.update(dt);
         }
-
+        collisionHandler.detectCollisions();
     }
 
     @Override
     public void render(SpriteBatch sb) {
         stateTime += Gdx.graphics.getDeltaTime();
-
-        for(Heliflopter heli : heliflopters){
-            TextureRegion currentFrame =
-                    heliflopter.getFlyAnimation().getKeyFrame(stateTime, true);
-        }
 
         for(Heliflopter heli : heliflopters){
             if(heli.checkBounce()){
@@ -60,7 +58,6 @@ public class PlayState extends State {
         }
 
         sb.begin();
-
         for(Heliflopter heli : heliflopters){
             TextureRegion currentFrame =
                     heli.getFlyAnimation().getKeyFrame(stateTime, true);
