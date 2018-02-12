@@ -12,16 +12,26 @@ import com.opium.game.sprites.Position;
  *  Created by opium on 18.01.18.
  */
 
-public class PlayState extends State {
+public final class PlayState extends State {
+
+    // Declare Singleton
+    private static PlayState instance = null;
 
     private Heliflopter heliflopter;
     private Position position;
-
 
     protected PlayState(GameStateManager gsm) {
         super(gsm);
         heliflopter = new Heliflopter(MyGdxGame.WIDTH / 2, MyGdxGame.HEIGHT / 2);
         position = new Position(MyGdxGame.WIDTH / 2, MyGdxGame.HEIGHT / 2);
+    }
+
+    // Lazy initialization of Singleton
+    public static PlayState getInstance(GameStateManager gsm) {
+        if(instance == null) {
+            instance = new PlayState(gsm);
+        }
+        return instance;
     }
 
     @Override
